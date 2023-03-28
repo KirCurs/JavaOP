@@ -1,7 +1,6 @@
+package Num301;
 
-package Num3;
-
-
+import java.util.function.Predicate;
 
 public class LinkedList {
     private Node head;
@@ -13,60 +12,67 @@ public class LinkedList {
 
     public static class Node {
         public int data;
-        public Node nextElem;
+        public Node next;
 
         public Node(int data) {
             this.data = data;
-            nextElem = null;
+            next = null;
         }
     }
 
-    public void setNum(int num) {
-        Node newNode = new Node(num);
-        Node currentNode = head;
+    public void add(int value) {
+        Node newNode = new Node(value);
+
 
         if (head == null) {
             head = newNode;
 
-        }else {
-            while (currentNode.nextElem != null){
-                currentNode = currentNode.nextElem;
+        } else {
+            Node currentNode = head;
+            while (currentNode.next != null) {
+
+                currentNode = currentNode.next;
             }
-            currentNode.nextElem = newNode;
+            currentNode.next = newNode;
         }
 
     }
-        public void remove (int num){
-            Node currentNode = head;
-            Node prevNode = null;
 
-            while (currentNode.nextElem != null) {
+    public void removeForIndex(int index) {
 
-                if (currentNode.data == num) {
+    }
 
-                    if (currentNode == head) {
-                        head = currentNode.nextElem;
-                    } else {
-                        prevNode.nextElem = currentNode.nextElem;
-                    }
+    public void remove(Predicate<Integer> condition) {
+        Node currentNode = head;
+        Node prevNode = null;
 
+        while (currentNode.next != null) {
+
+            if (condition.test(currentNode.data)) {
+
+                if (currentNode == head) {
+                    head = currentNode.next;
+                } else {
+                    prevNode.next = currentNode.next;
                 }
 
-                prevNode = currentNode;
-                currentNode = currentNode.nextElem;
-            }
-        }
-        public void print () {
-            Node currentNode = head;
-
-            if (head != null) {
-                System.out.println(head.data);
             }
 
-            while (currentNode.nextElem != null) {
-                currentNode = currentNode.nextElem;
-                System.out.println(currentNode.data);
-            }
+            prevNode = currentNode;
+            currentNode = currentNode.next;
         }
     }
- // удаление по индексу, добавление по индексу, добавление в конец
+
+    public void print() {
+        Node currentNode = head;
+
+        if (head != null) {
+            System.out.println(head.data);
+        }
+
+        while (currentNode.next != null) {
+            currentNode = currentNode.next;
+            System.out.println(currentNode.data);
+        }
+    }
+}
