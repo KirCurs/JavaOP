@@ -8,7 +8,7 @@ public class Main {
         System.out.println(m.toString());
         System.out.println("Sum: " + m.sum());
 
-        int[][] mat = createMatrix(3);
+        int[][] mat = createMatrix(4);
         printMatrix(mat);
         multiplyMatrix(mat);
     }
