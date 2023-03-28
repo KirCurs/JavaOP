@@ -1,14 +1,12 @@
-package Num3;
-
+package Num301;
 
 public class Main {
     public static void main(String[] args) {
         LinkedList list = new LinkedList();
-        list.setNum(1);
-        list.setNum(2);
-        list.setNum(3);
+        list.add(1);
 
-        //list.remove(1);
+
+        list.remove(v -> v == 1);
         list.print();
     }
 }
