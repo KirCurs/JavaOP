@@ -1,20 +1,41 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.List;
 
 class HashTable {
     private static final int TABLE_SIZE = 10;
+    private static final double LOAD_FACTOR = 0.75;
     private LinkedList<Entry>[] table;
+    private int size;
 
     public HashTable() {
         table = new LinkedList[TABLE_SIZE];
         for (int i = 0; i < TABLE_SIZE; i++) {
             table[i] = new LinkedList<>();
         }
+        size = 0;
     }
 
     private int hashFunction(String key) {
         int hash = key.hashCode();
         return Math.abs(hash) % TABLE_SIZE;
+    }
+
+    private void rehash() {
+        int newCapacity = TABLE_SIZE * 2;
+        LinkedList<Entry>[] newTable = new LinkedList[newCapacity];
+        for (int i = 0; i < newCapacity; i++) {
+            newTable[i] = new LinkedList<>();
+        }
+
+        for (LinkedList<Entry> bucket : table) {
+            for (Entry entry : bucket) {
+                int index = entry.getKey().hashCode() % newCapacity;
+                newTable[index].add(entry);
+            }
+        }
+
+        table = newTable;
     }
 
     public void put(String key, String value) {
@@ -29,6 +50,11 @@ class HashTable {
         }
 
         bucket.add(new Entry(key, value));
+        size++;
+
+        if ((double) size / TABLE_SIZE > LOAD_FACTOR) {
+            rehash();
+        }
     }
 
     public String get(String key) {
@@ -41,7 +67,7 @@ class HashTable {
             }
         }
 
-        return null; 
+        return null;
     }
 
     public void remove(String key) {
@@ -51,84 +77,75 @@ class HashTable {
         for (Entry entry : bucket) {
             if (entry.getKey().equals(key)) {
                 bucket.remove(entry);
+                size--;
                 return;
             }
         }
-
-        
     }
 
-    public void list() {
+    public void removeByKey(String key) {
+        remove(key);
+    }
+
+    public List<Entry> list() {
+        List<Entry> entries = new ArrayList<>();
         for (LinkedList<Entry> bucket : table) {
             for (Entry entry : bucket) {
-                System.out.println("Ключ: " + entry.getKey() + ", Значение: " + entry.getValue());
+                entries.add(entry);
             }
         }
-    }
-}
-
-class Entry {
-    private String key;
-    private String value;
-
-    public Entry(String key, String value) {
-        this.key = key;
-        this.value = value;
+        return entries;
     }
 
-    public String getKey() {
-        return key;
+    public void printHashTable() {
+        List<Entry> entries = list();
+        System.out.println("Хэш-таблица:");
+        for (Entry entry : entries) {
+            printEntry(entry);
+        }
     }
 
-    public String getValue() {
-        return value;
+    private void printEntry(Entry entry) {
+        System.out.println("Ключ: " + entry.getKey() + ", Значение: " + entry.getValue());
     }
 
-    public void setValue(String value) {
-        this.value = value;
+     class Entry {
+        private String key;
+        private String value;
+
+        public Entry(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 }
 
 public class Main {
     public static void main(String[] args) {
         HashTable hashTable = new HashTable();
-        Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Введите команду (put, get, remove, list, exit):");
+        hashTable.put("ключ1", "значение1");
+        hashTable.put("ключ2", "значение2");
+        hashTable.put("ключ3", "значение3");
 
-        while (true) {
-            String command = scanner.nextLine();
+        List<HashTable.Entry> entries = hashTable.list();
 
-            if (command.equals("put")) {
-                System.out.println("Введите ключ:");
-                String key = scanner.nextLine();
-                System.out.println("Введите значение:");
-                String value = scanner.nextLine();
-                hashTable.put(key, value);
-                System.out.println("Элемент добавлен.");
-            } else if (command.equals("get")) {
-                System.out.println("Введите ключ:");
-                String key = scanner.nextLine();
-                String value = hashTable.get(key);
-                if (value != null) {
-                    System.out.println("Значение: " + value);
-                } else {
-                    System.out.println("Элемент не найден.");
-                }
-            } else if (command.equals("remove")) {
-                System.out.println("Введите ключ:");
-                String key = scanner.nextLine();
-                hashTable.remove(key);
-                System.out.println("Элемент удален.");
-            } else if (command.equals("list")) {
-                hashTable.list();
-            } else if (command.equals("exit")) {
-                break;
-            } else {
-                System.out.println("Неверная команда.");
-            }
-        }
+        String keyToRemove = "ключ2";
+        hashTable.removeByKey(keyToRemove);
 
-        scanner.close();
+        entries = hashTable.list();
+        hashTable.printHashTable();
     }
 }
