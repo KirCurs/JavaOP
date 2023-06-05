@@ -83,9 +83,7 @@ class HashTable {
         }
     }
 
-    public void removeByKey(String key) {
-        remove(key);
-    }
+
 
     public List<Entry> list() {
         List<Entry> entries = new ArrayList<>();
